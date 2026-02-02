@@ -37,15 +37,15 @@ Welcome to **A1-Tool**, a powerful, user-friendly web application that brings to
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/all-in-one-tools.git
-   cd all-in-one-tools
+   git clone https://github.com/Sanjaydk357/A1-Tool.git
+   cd A1-Tool
    pip install -r requirements.txt
    python app.py
    ```
 
 2. **📁 Project Structure**
    ```
-   all-in-one-tools/
+   A1-Tool/
       │
       ├── static/
       ├── templates/
