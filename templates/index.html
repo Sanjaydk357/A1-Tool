@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A1-Tool | All-In-One Toolkit</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- Add Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">A1-Tool <span style="color:aqua;">.</span></div>
+    <div class="header-right">Professional Media Suite</div>
+  </header>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flash-container">
+    {% for category, message in messages %}
+    <div class="flash-message {{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <main>
+    <div class="hero">
+      <h1>Welcome to A1-Tool</h1>
+      <div class="subtitle">Edit, Convert, Create 🎉</div>
+    </div>
+
+    <!-- Video Tools Section -->
+    <h2><i class="fas fa-video"></i> Video Tools</h2>
+    <div class="grid">
+      <div class="tool-card" onclick="openModal('modal-merge')">
+        <div class="tool-icon">🔗</div>
+        <div>Merge Videos</div>
+      </div>
+      <div class="tool-card" onclick="openModal('modal-extract')">
+        <div class="tool-icon">🎵</div>
+        <div>Extract Audio</div>
+      </div>
+      <div class="tool-card" onclick="openModal('modal-screen')">
+        <div class="tool-icon">🎥</div>
+        <div>Screen Recorder</div>
+      </div>
+      <div class="tool-card" onclick="openModal('modal-dl-video')">
+        <div class="tool-icon">📽️</div>
+        <div>Download Video</div>
+      </div>
+    </div>
+
+    <!-- Audio Tools Section -->
+    <h2><i class="fas fa-music"></i> Audio Tools</h2>
+    <div class="grid">
+      <div class="tool-card" onclick="openModal('modal-trim')">
+        <div class="tool-icon">✂️</div>
+        <div>Trim Audio</div>
+      </div>
+      <div class="tool-card" onclick="openModal('modal-merge-audio')">
+        <div class="tool-icon">🎶</div>
+        <div>Merge Audio</div>
+      </div>
+      <div class="tool-card" onclick="openModal('modal-record')">
+        <div class="tool-icon">🎤</div>
+        <div>Voice Recorder</div>
+      </div>
+      <div class="tool-card" onclick="openModal('modal-reverse')">
+        <div class="tool-icon">⏪</div>
+        <div>Reverse Audio</div>
+      </div>
+      <div class="tool-card" onclick="openModal('modal-dl-audio')">
+        <div class="tool-icon">🎼</div>
+        <div>Download Audio</div>
+      </div>
+    </div>
+
+    <!-- PDF Tools Section -->
+    <h2><i class="fas fa-file-pdf"></i> PDF & Docs</h2>
+    <div class="grid">
+      <div class="tool-card" onclick="openModal('modal-split')">
+        <div class="tool-icon">✂️</div>
+        <div>Split PDF</div>
+      </div>
+      <div class="tool-card" onclick="openModal('modal-merge-pdf')">
+        <div class="tool-icon">🔗</div>
+        <div>Merge PDF</div>
+      </div>
+      <div class="tool-card" onclick="openModal('modal-p2w')">
+        <div class="tool-icon">📄</div>
+        <div>PDF to Word</div>
+      </div>
+      <div class="tool-card" onclick="openModal('modal-w2p')">
+        <div class="tool-icon">📝</div>
+        <div>Word to PDF</div>
+      </div>
+      <div class="tool-card" onclick="openModal('modal-i2p')">
+        <div class="tool-icon">🖼️</div>
+        <div>Image to PDF</div>
+      </div>
+      <div class="tool-card" onclick="openModal('modal-zip')">
+        <div class="tool-icon">🗜️</div>
+        <div>Compress to Zip</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODALS CONTAINER -->
+
+  <!-- Merge Videos Modal -->
+  <!-- Merge Videos Modal -->
+  <div id="modal-merge" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-merge')">&times;</span>
+      <h3>Merge Videos</h3>
+
+      <!-- The Merge Form -->
+      <form id="mergeForm" onsubmit="handleMergeSubmit(event)">
+        <div id="video-inputs-container">
+          <!-- Initial 2 inputs -->
+          <div class="file-input-row">
+            <label>1.</label>
+            <input type="file" name="videos[]" accept="video/*" required>
+          </div>
+          <div class="file-input-row">
+            <label>2.</label>
+            <input type="file" name="videos[]" accept="video/*" required>
+          </div>
+        </div>
+
+        <!-- Add Button -->
+        <button type="button" class="btn-secondary" onclick="addVideoInput()">
+          <i class="fas fa-plus"></i> Add Another Video
+        </button>
+
+        <button type="submit" class="btn-primary" id="mergeBtn">Merge Videos</button>
+
+        <!-- Loader -->
+        <div class="loader" id="mergeLoader">
+          Processing... Please wait <i class="fas fa-spinner fa-spin"></i>
+        </div>
+      </form>
+
+      <!-- Success / Download Section (Hidden by default) -->
+      <div id="mergeSuccess" style="display:none; text-align:center; margin-top:20px;">
+        <div style="color: green; font-size: 50px; margin-bottom: 10px;">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <p style="font-size: 18px; font-weight: bold;">Video Merged Successfully!</p>
+        <a id="downloadLink" href="#" class="btn-download">
+          <i class="fas fa-download"></i> Download Now
+        </a>
+        <br><br>
+        <button class="btn-text" onclick="resetMergeModal()">Merge More</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Extract Audio Modal -->
+  <div id="modal-extract" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-extract')">&times;</span>
+      <h3>Video to Audio</h3>
+      <form action="/video-to-audio" method="post" enctype="multipart/form-data" onsubmit="showLoader(this)">
+        <label>Upload Video:</label>
+        <input type="file" name="video" accept="video/*" required>
+        <button type="submit" class="btn-primary">Extract Audio</button>
+        <div class="loader">Extracting... <i class="fas fa-spinner fa-spin"></i></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Screen Recorder Modal (Note: This usually requires JS on frontend, simplified here for upload) -->
+  <div id="modal-screen" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-screen')">&times;</span>
+      <h3>Screen Recorder Upload</h3>
+      <p><small>Browser recording requires Frontend JS. This form uploads a .webm file.</small></p>
+      <form action="/screen-recorder" method="post" enctype="multipart/form-data">
+        <input type="file" name="recording" required>
+        <button type="submit" class="btn-primary">Save Recording</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Download Video Modal -->
+  <div id="modal-dl-video" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-dl-video')">&times;</span>
+      <h3>Download YouTube Video</h3>
+
+      <form id="dlVideoForm" onsubmit="handleDownload(event, 'video')">
+        <input type="text" name="video_url" placeholder="Paste YouTube URL here..." required>
+        <button type="submit" class="btn-primary" id="btn-dl-video">Download MP4</button>
+
+        <!-- Progress Text Area -->
+        <div id="progress-container-video" class="progress-console" style="display:none;">
+          <span class="terminal-text" id="progress-text-video">Initializing...</span>
+        </div>
+      </form>
+
+      <!-- Success Section -->
+      <div id="success-dl-video" style="display:none; text-align:center;">
+        <p class="success-msg">Download Complete!</p>
+        <a id="link-dl-video" href="#" class="btn-download">Save to Device</a>
+        <br><br>
+        <button class="btn-text" onclick="resetDlModal('video')">Download Another</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trim Audio Modal -->
+  <div id="modal-trim" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-trim')">&times;</span>
+      <h3>Trim Audio</h3>
+      <form action="/trim-audio" method="post" enctype="multipart/form-data" onsubmit="showLoader(this)">
+        <input type="file" name="audio" accept="audio/*" required>
+        <div class="input-group">
+          <input type="number" step="0.1" name="start" placeholder="Start (sec)" required>
+          <input type="number" step="0.1" name="end" placeholder="End (sec)" required>
+        </div>
+        <button type="submit" class="btn-primary">Trim</button>
+        <div class="loader">Trimming... <i class="fas fa-spinner fa-spin"></i></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Merge Audio Modal -->
+  <div id="modal-merge-audio" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-merge-audio')">&times;</span>
+      <h3>Merge Audio</h3>
+      <form action="/merge-audio" method="post" enctype="multipart/form-data" onsubmit="showLoader(this)">
+        <label>Audio 1:</label>
+        <input type="file" name="audio1" accept="audio/*" required>
+        <label>Audio 2:</label>
+        <input type="file" name="audio2" accept="audio/*" required>
+        <button type="submit" class="btn-primary">Merge</button>
+        <div class="loader">Merging... <i class="fas fa-spinner fa-spin"></i></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Record Audio Modal -->
+  <div id="modal-record" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-record')">&times;</span>
+      <h3>Upload Voice Recording</h3>
+      <form action="/record-audio" method="post" enctype="multipart/form-data">
+        <input type="file" name="audio" required>
+        <button type="submit" class="btn-primary">Convert & Save</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Reverse Audio Modal -->
+  <div id="modal-reverse" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-reverse')">&times;</span>
+      <h3>Reverse Audio</h3>
+      <form action="/reverse-audio" method="post" enctype="multipart/form-data" onsubmit="showLoader(this)">
+        <input type="file" name="audio" accept="audio/*" required>
+        <button type="submit" class="btn-primary">Reverse</button>
+        <div class="loader">Reversing... <i class="fas fa-spinner fa-spin"></i></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Download Audio Modal -->
+  <div id="modal-dl-audio" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-dl-audio')">&times;</span>
+      <h3>Download Audio</h3>
+
+      <form id="dlAudioForm" onsubmit="handleDownload(event, 'audio')">
+        <input type="text" name="video_url" placeholder="Paste YouTube URL here..." required>
+        <button type="submit" class="btn-primary" id="btn-dl-audio">Download MP3</button>
+
+        <!-- Progress Text Area -->
+        <div id="progress-container-audio" class="progress-console" style="display:none;">
+          <span class="terminal-text" id="progress-text-audio">Initializing...</span>
+        </div>
+      </form>
+
+      <!-- Success Section -->
+      <div id="success-dl-audio" style="display:none; text-align:center;">
+        <p class="success-msg">Conversion Complete!</p>
+        <a id="link-dl-audio" href="#" class="btn-download">Save to Device</a>
+        <br><br>
+        <button class="btn-text" onclick="resetDlModal('audio')">Download Another</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Tools Modals -->
+  <div id="modal-split" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-split')">&times;</span>
+      <h3>Split PDF Pages</h3>
+      <form action="/split-pages" method="post" enctype="multipart/form-data" onsubmit="showLoader(this)">
+        <input type="file" name="pdf" accept=".pdf" required>
+        <button type="submit" class="btn-primary">Split & Zip</button>
+        <div class="loader">Splitting... <i class="fas fa-spinner fa-spin"></i></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-merge-pdf" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-merge-pdf')">&times;</span>
+      <h3>Merge PDFs</h3>
+      <form action="/merge-pdf" method="post" enctype="multipart/form-data" onsubmit="showLoader(this)">
+        <label>Select Multiple PDFs:</label>
+        <input type="file" name="pdfs" accept=".pdf" multiple required>
+        <button type="submit" class="btn-primary">Merge</button>
+        <div class="loader">Merging... <i class="fas fa-spinner fa-spin"></i></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-p2w" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-p2w')">&times;</span>
+      <h3>PDF to Word</h3>
+      <form action="/pdf-to-word" method="post" enctype="multipart/form-data" onsubmit="showLoader(this)">
+        <input type="file" name="pdf" accept=".pdf" required>
+        <button type="submit" class="btn-primary">Convert</button>
+        <div class="loader">Converting... <i class="fas fa-spinner fa-spin"></i></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-w2p" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-w2p')">&times;</span>
+      <h3>Word to PDF</h3>
+      <form action="/word-to-pdf" method="post" enctype="multipart/form-data" onsubmit="showLoader(this)">
+        <input type="file" name="word" accept=".docx" required>
+        <button type="submit" class="btn-primary">Convert</button>
+        <div class="loader">Converting... <i class="fas fa-spinner fa-spin"></i></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-i2p" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-i2p')">&times;</span>
+      <h3>Images to PDF</h3>
+      <form action="/image-to-pdf" method="post" enctype="multipart/form-data" onsubmit="showLoader(this)">
+        <label>Select Multiple Images:</label>
+        <input type="file" name="images" accept="image/*" multiple required>
+        <button type="submit" class="btn-primary">Create PDF</button>
+        <div class="loader">Creating PDF... <i class="fas fa-spinner fa-spin"></i></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-zip" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-zip')">&times;</span>
+      <h3>Compress to Zip</h3>
+      <form action="/compress-zip" method="post" enctype="multipart/form-data" onsubmit="showLoader(this)">
+        <label>Select Files:</label>
+        <input type="file" name="files" multiple required>
+        <button type="submit" class="btn-primary">Zip It</button>
+        <div class="loader">Compressing... <i class="fas fa-spinner fa-spin"></i></div>
+      </form>
+    </div>
+  </div>
+
+
+  <footer>
+    <p>
+    <div>&copy; 2025 A1-Tool by <a href="#" id="name">Sanjay</a></div>
+    </p>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // 1. Add new file input dynamically
+    function addVideoInput() {
+      const container = document.getElementById('video-inputs-container');
+      const count = container.children.length + 1;
+
+      const div = document.createElement('div');
+      div.className = 'file-input-row';
+      div.innerHTML = `
+        <label>${count}.</label>
+        <input type="file" name="videos[]" accept="video/*" required>
+        <span class="remove-row" onclick="this.parentElement.remove()" style="cursor:pointer; color:red; margin-left:10px;">&times;</span>
+    `;
+      container.appendChild(div);
+    }
+
+    // 2. Handle AJAX Submission for Merge
+    async function handleMergeSubmit(event) {
+      event.preventDefault(); // Stop page reload
+
+      const form = document.getElementById('mergeForm');
+      const loader = document.getElementById('mergeLoader');
+      const btn = document.getElementById('mergeBtn');
+      const successDiv = document.getElementById('mergeSuccess');
+
+      // UI Updates
+      loader.style.display = 'block';
+      btn.style.display = 'none'; // Hide submit button so they don't click twice
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch('/merge-videos', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        loader.style.display = 'none';
+
+        if (response.ok && data.success) {
+          // Hide form, show success
+          form.style.display = 'none';
+          successDiv.style.display = 'block';
+
+          // Set download link
+          const link = document.getElementById('downloadLink');
+          link.href = data.download_url;
+          link.download = "merged_video.mp4"; // Suggested filename
+        } else {
+          alert('Error: ' + (data.error || 'Unknown error occurred'));
+          btn.style.display = 'block'; // Bring button back
+        }
+      } catch (error) {
+        console.error(error);
+        loader.style.display = 'none';
+        btn.style.display = 'block';
+        alert('An error occurred connecting to the server.');
+      }
+    }
+
+    // 3. Reset Modal for next use
+    function resetMergeModal() {
+      document.getElementById('mergeForm').style.display = 'flex';
+      document.getElementById('mergeSuccess').style.display = 'none';
+      document.getElementById('mergeBtn').style.display = 'block';
+      document.getElementById('mergeForm').reset();
+
+      // Reset inputs to just 2
+      const container = document.getElementById('video-inputs-container');
+      container.innerHTML = `
+        <div class="file-input-row"><label>1.</label><input type="file" name="videos[]" accept="video/*" required></div>
+        <div class="file-input-row"><label>2.</label><input type="file" name="videos[]" accept="video/*" required></div>
+    `;
+    }
+    // Open Modal
+    function openModal(id) {
+      document.getElementById(id).style.display = 'flex';
+    }
+
+    // Close Modal
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+      // Reset loader if closed without submitting
+      const form = document.querySelector('#' + id + ' form');
+      if (form) {
+        const loader = form.querySelector('.loader');
+        if (loader) loader.style.display = 'none';
+      }
+    }
+
+    // Close on click outside
+    window.onclick = function (event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+      }
+    }
+
+    // Show processing text
+    function showLoader(form) {
+      const loader = form.querySelector('.loader');
+      if (loader) loader.style.display = 'block';
+    }
+
+    function generateUUID() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    async function handleDownload(event, type) {
+      event.preventDefault();
+
+      // Determine IDs based on type (video or audio)
+      const formId = type === 'video' ? 'dlVideoForm' : 'dlAudioForm';
+      const btnId = type === 'video' ? 'btn-dl-video' : 'btn-dl-audio';
+      const progressContainer = document.getElementById(`progress-container-${type}`);
+      const progressText = document.getElementById(`progress-text-${type}`);
+      const successDiv = document.getElementById(`success-dl-${type}`);
+      const downloadLink = document.getElementById(`link-dl-${type}`);
+
+      const form = document.getElementById(formId);
+      const btn = document.getElementById(btnId);
+
+      // Generate unique task ID
+      const taskId = generateUUID();
+
+      // UI Setup
+      btn.style.display = 'none';
+      progressContainer.style.display = 'block';
+      progressText.innerText = "Connecting to server...";
+
+      const formData = new FormData(form);
+      formData.append('task_id', taskId);
+
+      // 1. Start Polling in the background
+      const pollInterval = setInterval(async () => {
+        try {
+          const res = await fetch(`/progress/${taskId}`);
+          const data = await res.json();
+          if (data.status) {
+            progressText.innerText = data.status;
+          }
+        } catch (e) {
+          console.log("Polling error", e);
+        }
+      }, 1000); // Check every 1 second
+
+      // 2. Start the main Download request
+      try {
+        const endpoint = type === 'video' ? '/download-video' : '/download-audio';
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        // Stop Polling
+        clearInterval(pollInterval);
+
+        if (response.ok && result.success) {
+          // Show Success
+          form.style.display = 'none';
+          successDiv.style.display = 'block';
+          downloadLink.href = result.download_url;
+          // Optionally auto-click: downloadLink.click();
+        } else {
+          alert("Error: " + (result.error || "Unknown error"));
+          resetDlModal(type);
+        }
+      } catch (error) {
+        clearInterval(pollInterval);
+        alert("Server Error");
+        resetDlModal(type);
+      }
+    }
+
+    function resetDlModal(type) {
+      document.getElementById(`dl${type === 'video' ? 'Video' : 'Audio'}Form`).style.display = 'flex';
+      document.getElementById(`success-dl-${type}`).style.display = 'none';
+      document.getElementById(`btn-dl-${type}`).style.display = 'block';
+      document.getElementById(`progress-container-${type}`).style.display = 'none';
+    }
+  </script>
+</body>
+
+</html>
